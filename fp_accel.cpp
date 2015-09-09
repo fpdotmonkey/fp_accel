@@ -1,10 +1,15 @@
 #include <fp_accel.h>
 #include <Wire.h>
 
+const int DEVICE_ADDRESS = 0x1D;
+
 byte fp::readRegister(byte register_address, int numBytes) {
-  Wire.requestFrom(register_address, numBytes);
-  byte c;
-  c = Wire.read();
+  Wire.beginTransmission (DEVICE_ADDRESS);
+  Wire.write (register_address);
+  Wire.endTransmission (false);  // repeated start
+  Wire.requestFrom(register_address, 1);
+  byte c = Wire.read();
+  Serial.println(c);
   Serial.print("0x");
   Serial.print(register_address, HEX);
   Serial.print("\t");
@@ -15,8 +20,9 @@ byte fp::readRegister(byte register_address, int numBytes) {
 int fp::writeRegister(byte register_address, byte val) {
   int numBytes;
 
-  Wire.beginTransmission(register_address);
-  numBytes = Wire.write(val);
+  Wire.beginTransmission(DEVICE_ADDRESS);
+  Wire.write(register_address);
+  Wire.write(val);
   Wire.endTransmission();
 
   return numBytes;
@@ -36,6 +42,8 @@ void fp::init() {
   writeRegister(fp::CTRL5, 0x64); //magnet resolution and sample rate
   writeRegister(fp::CTRL6, 0x20); //+/- 4 gauss
   writeRegister(fp::CTRL7, 0x00); //high-pass filter state
+
+  Serial.println(readRegister(0x0F, 1));
 }
 
 fp::vector_d fp::accelRaw() {
