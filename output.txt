@@ -30,3 +30,13 @@ accel	-1.00
 255
 0xD	255
 magn	-1.00
+
+
+
+
+
+I2C scanner. Scanning ...
+Found address: 29 (0x1D)
+Found address: 107 (0x6B)
+Done.
+Found 2 device(s).
